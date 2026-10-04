@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] | Synvora Enterprise</title>
+    
+    <!-- Fonts Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- AOS Scroll Animation Library CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    
+    <!-- Custom Design System Styles -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    
+    <!-- View-specific CSS outputs -->
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="page-container">
+        <!-- Floating Glass Header -->
+        <header class="site-header">
+            <div class="header-container" data-aos="fade-down" data-aos-duration="600">
+                <nav class="navbar navbar-expand-lg navbar-light navbar-glass">
+                    <div class="container-fluid p-0">
+                        <!-- Brand -->
+                        <a class="navbar-brand gsap-nav-brand" asp-controller="Home" asp-action="Index">
+                            Synvora<span class="navbar-brand-dot"></span>
+                        </a>
+                        
+                        <!-- Toggle Button for Mobile -->
+                        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#synvoraNavbar" aria-controls="synvoraNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        
+                        <!-- Nav Items -->
+                        <div class="collapse navbar-collapse" id="synvoraNavbar">
+                            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-1">
+                                <li class="nav-item">
+                                    <a class="nav-link gsap-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" asp-controller="Home" asp-action="Index">Overview</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link gsap-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Products" ? "active" : "")" asp-controller="Home" asp-action="Products">Products</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link gsap-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "About" ? "active" : "")" asp-controller="Home" asp-action="About">Enterprise</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link gsap-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Contact" ? "active" : "")" asp-controller="Home" asp-action="Contact">Contact</a>
+                                </li>
+                            </ul>
+                            
+                            <!-- Search & Action buttons -->
+                            <div class="d-flex align-items-center gap-3">
+                                <!-- Command Menu trigger -->
+                                <button type="button" class="search-trigger-btn gsap-search-btn d-none d-md-flex" onclick="toggleCmdMenu(true)" aria-label="Search and commands">
+                                    <i class="bi bi-search"></i>
+                                    <span>Search</span>
+                                    <span class="search-key-badge"><kbd class="cmd-menu-kbd">⌘</kbd> K</span>
+                                </button>
+                                <button type="button" class="btn btn-sm d-md-none text-secondary border-0" onclick="toggleCmdMenu(true)" aria-label="Search">
+                                    <i class="bi bi-search fs-5"></i>
+                                </button>
+                                
+                                <a asp-controller="Home" asp-action="Contact" class="btn-header-cta text-decoration-none text-center gsap-btn-cta">Talk to Sales</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Command Menu (Ctrl+K / Cmd+K Modal) -->
+        <div id="cmdMenuBackdrop" class="cmd-menu-backdrop" onclick="handleBackdropClick(event)">
+            <div class="cmd-menu-dialog">
+                <div class="cmd-menu-input-wrapper">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="cmdMenuInput" class="cmd-menu-input" placeholder="Type a command or search..." onkeyup="filterCmdItems()" autocomplete="off" />
+                </div>
+                <div id="cmdMenuResults" class="cmd-menu-results">
+                    <div class="cmd-menu-item" onclick="navigateRoute('/')" data-keywords="home overview main landing index synvora">
+                        <i class="bi bi-house text-primary"></i>
+                        <div>
+                            <div class="fw-semibold">Overview</div>
+                            <small class="text-muted text-truncate">Synvora product overview and SaaS highlights</small>
+                        </div>
+                        <span class="cmd-menu-item-badge">Go</span>
+                    </div>
+                    <div class="cmd-menu-item" onclick="navigateRoute('/Home/Products')" data-keywords="products compute flow ledger services software solutions">
+                        <i class="bi bi-cpu text-info"></i>
+                        <div>
+                            <div class="fw-semibold">Products Console</div>
+                            <small class="text-muted text-truncate">Compute, Flow automation, and Ledger double-entry system</small>
+                        </div>
+                        <span class="cmd-menu-item-badge">Go</span>
+                    </div>
+                    <div class="cmd-menu-item" onclick="navigateRoute('/Home/About')" data-keywords="about enterprise company utkarsh structure team history backing">
+                        <i class="bi bi-building text-success"></i>
+                        <div>
+                            <div class="fw-semibold">Enterprise backing</div>
+                            <small class="text-muted text-truncate">Mission statement, history and Utkarsh Enterprises integration</small>
+                        </div>
+                        <span class="cmd-menu-item-badge">Go</span>
+                    </div>
+                    <div class="cmd-menu-item" onclick="navigateRoute('/Home/Contact')" data-keywords="contact sales email phone support tickets messages touch">
+                        <i class="bi bi-envelope text-warning"></i>
+                        <div>
+                            <div class="fw-semibold">Talk to Sales</div>
+                            <small class="text-muted text-truncate">Schedule an architecture call or request a trial</small>
+                        </div>
+                        <span class="cmd-menu-item-badge">Go</span>
+                    </div>
+                    <div class="cmd-menu-item" onclick="toggleTheme()" data-keywords="theme light dark toggle mode switch color screen">
+                        <i class="bi bi-sun text-danger"></i>
+                        <div>
+                            <div class="fw-semibold">Toggle Color Theme</div>
+                            <small class="text-muted text-truncate">Switch screen brand accents dynamically</small>
+                        </div>
+                        <span class="cmd-menu-item-badge">Cmd+T</span>
+                    </div>
+                </div>
+                <div class="cmd-menu-footer">
+                    <span>Use <span class="cmd-menu-kbd">↑</span> <span class="cmd-menu-kbd">↓</span> to navigate, <span class="cmd-menu-kbd">Enter</span> to select, <span class="cmd-menu-kbd">Esc</span> to close</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Body -->
+        <main role="main" class="main-content">
+            @RenderBody()
+        </main>
+
+        <!-- Premium Light Footer -->
+        <footer class="site-footer-light">
+            <div class="container text-start">
+                <div class="row gy-4">
+                    <div class="col-lg-4" data-aos="fade-up">
+                        <a class="navbar-brand text-dark mb-3 d-inline-flex align-items-center" asp-controller="Home" asp-action="Index">
+                            Synvora<span class="navbar-brand-dot"></span>
+                        </a>
+                        <p class="text-secondary pe-lg-4 fs-6">
+                            Next-generation enterprise software infrastructure built for velocity, safety, and scale. Inspired by industry standards, powered by developers.
+                        </p>
+                        <div class="mt-3 text-muted fs-6">
+                            <span class="text-dark fw-semibold font-monospace">Powered by Utkarsh Enterprises</span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="100">
+                        <h6 class="footer-title">Products</h6>
+                        <ul class="footer-link-list">
+                            <li><a asp-controller="Home" asp-action="Products">Synvora Compute</a></li>
+                            <li><a asp-controller="Home" asp-action="Products">Synvora Flow</a></li>
+                            <li><a asp-controller="Home" asp-action="Products">Synvora Ledger</a></li>
+                            <li><a asp-controller="Home" asp-action="Products">Pricing Console</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="200">
+                        <h6 class="footer-title">Enterprise</h6>
+                        <ul class="footer-link-list">
+                            <li><a asp-controller="Home" asp-action="About">Utkarsh Core</a></li>
+                            <li><a asp-controller="Home" asp-action="About">Mission & Values</a></li>
+                            <li><a asp-controller="Home" asp-action="About">Partner Network</a></li>
+                            <li><a asp-controller="Home" asp-action="About">Governance</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="300">
+                        <h6 class="footer-title">Resources</h6>
+                        <ul class="footer-link-list">
+                            <li><a asp-controller="Home" asp-action="Contact">Documentation</a></li>
+                            <li><a asp-controller="Home" asp-action="Contact">Security Audit</a></li>
+                            <li><a asp-controller="Home" asp-action="Contact">System Status</a></li>
+                            <li><a asp-controller="Home" asp-action="Contact">Contact Developer</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-lg-2" data-aos="fade-up" data-aos-delay="400">
+                        <h6 class="footer-title">Platform</h6>
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-sm btn-secondary-custom text-start d-flex justify-content-between align-items-center" onclick="toggleCmdMenu(true)">
+                                <span class="fs-7">Command Palette</span>
+                                <span class="badge bg-secondary text-white font-monospace">⌘K</span>
+                            </button>
+                            <span class="text-muted fs-7 font-monospace">SDK v9.0.300</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                    <div>
+                        &copy; @DateTime.UtcNow.Year Synvora Inc. All rights reserved. Backed by Utkarsh Enterprises.
+                    </div>
+                    <div class="d-flex gap-4">
+                        <a href="#" class="text-muted text-decoration-none">Privacy Policy</a>
+                        <a href="#" class="text-muted text-decoration-none">Terms of Service</a>
+                        <a href="#" class="text-muted text-decoration-none">Security</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap Core Bundle JS -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JQuery (if needed by default validation partial) -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <!-- AOS Scroll Animation Library Script -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    
+    <!-- GSAP Animation Library Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <!-- Custom Core Scripts -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- View-specific script outputs -->
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
